@@ -1,15 +1,26 @@
-from flask import Flask, render_template, session
-import api
-from flask import session
+#!flask/bin/python
+from flask import Flask, jsonify
 
-# Initialize Flask app with the template folder address
 app = Flask(__name__)
-app.secret_key = 'N5\\A\xa7!\x80\xa0j\xd1\xdf\x19\xc8n\n\x1e)(\xb1Z\x7f?\x07A'
-print api
-app.register_blueprint(api.api_home, url_prefix="")
 
-# Listen on external IPs
-# For us, listen to port 3000 so you can just run 'python app.py' to start the server
+tasks = [
+    {
+        'id': 1,
+        'title': u'Buy groceries',
+        'description': u'Milk, Cheese, Pizza, Fruit, Tylenol',
+        'done': False
+    },
+    {
+        'id': 2,
+        'title': u'Learn Python',
+        'description': u'Need to find a good Python tutorial on the web',
+        'done': False
+    }
+]
+
+@app.route('/todo/api/v1.0/tasks', methods=['GET'])
+def get_tasks():
+    return jsonify({'tasks': tasks})
+
 if __name__ == '__main__':
-    # listen on external IPs
-    app.run(host='0.0.0.0', port=5555, debug=True)
+    app.run(debug=True, port=5555)
