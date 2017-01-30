@@ -1,7 +1,7 @@
 #!flask/bin/python
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect
 from flask_sqlalchemy import SQLAlchemy
-from flask.ext.heroku import Heroku
+from flask_heroku import Heroku
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/btl'
@@ -23,7 +23,7 @@ class User(db.Model):
 # Set "homepage" to index.html
 @app.route('/')
 def index():
-    return redirect('zechsch.github.io')
+    return redirect("http://zechsch.github.io", code=302)
     return render_template('index.html')
 
 # Save e-mail to database and send to success page
@@ -45,5 +45,5 @@ def get_tasks():
     return jsonify({'tasks': tasks})
 
 if __name__ == '__main__':
-    app.debug = True
+    app.debug = False
     app.run()
