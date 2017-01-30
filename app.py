@@ -1,10 +1,12 @@
 #!flask/bin/python
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask.ext.heroku import Heroku
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/btl'
 db = SQLAlchemy(app)
+heroku = Heroku(app)
 
 # Create our database model
 class User(db.Model):
@@ -19,24 +21,24 @@ class User(db.Model):
         return '<E-mail %r>' % self.email
 
 # Set "homepage" to index.html
-@app.route('/')
-def index():
-    print("here")
-    return render_template('index.html')
+#@app.route('/')
+#def index():
+#    print("here")
+#    return render_template('index.html')
 
 # Save e-mail to database and send to success page
-@app.route('/prereg', methods=['POST'])
-def prereg():
-    email = None
-    if request.method == 'POST':
-        email = request.form['email']
-        # Check that email does not already exist (not a great query, but works)
-        if not db.session.query(User).filter(User.email == email).count():
-            reg = User(email)
-            db.session.add(reg)
-            db.session.commit()
-            return render_template('success.html')
-    return render_template('index.html')
+#@app.route('/prereg', methods=['POST'])
+#def prereg():
+#    email = None
+#    if request.method == 'POST':
+#        email = request.form['email']
+#        # Check that email does not already exist (not a great query, but works)
+#        if not db.session.query(User).filter(User.email == email).count():
+#            reg = User(email)
+#            db.session.add(reg)
+#            db.session.commit()
+#            return render_template('success.html')
+#    return render_template('index.html')
 
 @app.route('/todo/api/v1.0/tasks', methods=['GET'])
 def get_tasks():
