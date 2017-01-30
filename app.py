@@ -21,10 +21,10 @@ class User(db.Model):
         return '<E-mail %r>' % self.email
 
 # Set "homepage" to index.html
-#@app.route('/')
-#def index():
-#    print("here")
-#    return render_template('index.html')
+@app.route('/')
+def index():
+    return redirect('zechsch.github.io')
+    return render_template('index.html')
 
 # Save e-mail to database and send to success page
 #@app.route('/prereg', methods=['POST'])
