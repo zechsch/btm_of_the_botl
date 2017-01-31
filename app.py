@@ -40,6 +40,18 @@ def index():
 #            return render_template('success.html')
 #    return render_template('index.html')
 
+
+tasks = [
+    {
+        'id':1,
+        'task':'this is first task'
+    },
+    {
+        'id':2,
+        'task':'this is another task'
+    }
+]
+
 @app.route('/todo/api/v1.0/tasks', methods=['GET'])
 def get_tasks():
     return jsonify({'tasks': tasks})
