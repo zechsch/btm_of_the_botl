@@ -49,6 +49,10 @@ tasks = [
     {
         'id':2,
         'task':'this is another task'
+    },
+    {
+        'id':3,
+        'task':'task 3'
     }
 ]
 
