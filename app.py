@@ -9,17 +9,44 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db = SQLAlchemy(app)
 heroku = Heroku(app)
 
+create table blacklist
+    (
+        blacklist_user_id number not null,
+        blacklist_device_id varchar2(32) not null,
+        blacklist_phone varchar2(10) not null,
+        blacklist_penalty varchar2(10) not null,
+        blacklist_created dateTime not null,
+        constraint blklsitpk primary key (blacklist_user_id),
+        constraint userfk foreign key (blacklist_user_id) references users
+class Blacklist(db.Model):
+    __tablename__ = "blacklist"
+    blacklist_user_id = db.Column(db.Integer, ForignKey("users.user_id"), primary_key=True)
+    
+
 # Create our database model
 class User(db.Model):
     __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True)
+    user_id = db.Column(db.Integer, Sequence('user_id_seq'), primary_key=True)
+    username = db.Column(db.String(8), default='') #enforce with username password must exist
+    user_password = db.Column(db.String(16), default='') #enforce with username password must exist
+    user_device_id = db.Column(db.String(32), nullable=False)
+    user_karma = db.Column(db.Integer, default=0)
+    user_photo = db.Column(db.String(32), default='')
+    user_phone = db.Column(db.String(10), unique=True, nullable=False)
 
-    def __init__(self, email):
-        self.email = email
+    def __init__(self, username, password, device_id, karma, photo, phone):
+        self.username = username
+        self.user_password = password
+        self.user_device_id = device_id
+        self.user_karma = karma
+        self.user_photo = photo
+        self.user_phone = phone
 
-    def __repr__(self):
-        return '<E-mail %r>' % self.email
+    def __r epr__(self):
+        return '<user_id %r, user_phone %r>' % self.email, self.user_phone
+
+
+
 
 # Set "homepage" to index.html
 @app.route('/')
