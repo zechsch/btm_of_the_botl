@@ -1,12 +1,5 @@
 DROP TABLE "ArchivedPost";
 DROP TABLE "Post";
-DROP TABLE "User";
-
-CREATE TABLE "User" (
-
-    UserID integer PRIMARY KEY
-
-);
 
 CREATE TABLE "Post" (
 
@@ -18,7 +11,7 @@ CREATE TABLE "Post" (
     Message     varchar(250) NOT NULL,
     ThreadId    integer references "Post"(PostID),
     Rating      integer NOT NULL,
-    UserID      integer NOT NULL references "User"(UserID),
+    UserID      integer NOT NULL references "users"(user_id),
     UpdatedDate date NOT NULL,
     UpdatedTime time NOT NULL,
     ExpiredDate date NOT NULL
@@ -34,7 +27,7 @@ CREATE TABLE "ArchivedPost" (
     Message     varchar(250) NOT NULL,
     ThreadId    integer references "Post"(PostID),
     Rating      integer NOT NULL,
-    UserID      integer NOT NULL references "User"(UserID),
+    UserID      integer NOT NULL references "users"(user_id),
     UpdatedDate date NOT NULL,
     UpdatedTime time NOT NULL,
     ExpiredDate date NOT NULL
