@@ -9,7 +9,6 @@ A location based social messaging service. Created by:
 
 # Endpoints:
 ## New Post
-----
   Adds a new post.
 
 * **URL**
