@@ -8,15 +8,32 @@ A location based social messaging service. Created by:
 + [Joshua Spigelman](jlspige@umich.edu)
 
 # Endpoints:
+## New Post
+----
+  Adds a new post.
 
-/api/new_post
-methods: POST
-required parameters: 5
-JSON object for request:
-{
-    "latitude": Lat,
-    "longitude": Long,
-    "message": msg,
-    "thread_id": thread,
-    "user_id": uid,
-}
+* **URL**
+
+  /api/new_post
+
+* **Method:**
+
+  `POST`
+
+* **Data Params**
+
+  + latitude (long)
+  + longitude (long)
+  + message (string)
+  + thread_id (int)
+  + user_id (int)
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{ status : OK }`
+ 
+* **Error Response:**
+
+  * **Code:** 404 NOT FOUND <br />
+    **Content:** `{ error : "User doesn't exist" }`
