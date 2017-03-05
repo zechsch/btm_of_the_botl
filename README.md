@@ -31,8 +31,40 @@ A location based social messaging service. Created by:
 
   * **Code:** 200 <br />
     **Content:** `{ status : OK }`
- 
+
 * **Error Response:**
 
-  * **Code:** 404 NOT FOUND <br />
+  * **Code:** 500 INTERNAL SERVER ERROR <br />
     **Content:** `{ error : "User doesn't exist" }`
+
+  * **Code:** 405 METHOD NOT ALLOWED <br />
+    **Content:** `{ error : "Method not allowed"}`
+
+## Rate Post
+  Edits rating for a post
+
+* **URL**
+
+  /api/rate_post
+
+* **Method:**
+
+  `POST`
+
+* **Data Params**
+
+  + post (int)
+  + vote (string) [up/down]
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{ status : OK }`
+
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL SERVER ERROR <br />
+    **Content:** `{ error : "Internal server error" }`
+
+  * **Code:** 405 METHOD NOT ALLOWED <br />
+    **Content:** `{ error : "Method not allowed"}`
