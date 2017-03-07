@@ -24,31 +24,82 @@ Should be taken care of on install and first open.
 Adds post to posts database."""
 @app.route('/api/new_post', methods=['POST'])
 def new_post():
-    post = None
     if request.method != 'POST':
         return make_response(jsonify({'status': 'failed',
                                       'error': 'Method not allowed'}), 405)
     try:
         data = request.get_json()
+
         latitude = data['latitude']
         longitude = data['longitude']
         msg = data['message']
         user = data['user_id']
+
+
 
         db.engine.execute("insert into Posts(Latitude, Longitude, Message, UserId) values(" +
             str(latitude) + ", " + str(longitude) + ", \'" + msg + "\', " + str(user) + ");")
 
         return jsonify({'status': 'OK'})
     except:
+        return make_response(jsonify({'status': 'failed',
+                        'error': str(sys.exc_info()[0])}), 500)
+#get thread
+"""
+{
+    thread:thread_id
+}
+"""
+@app.route('/api/get_thread', methods=['POST'])
+def get_thread():
+    if request.method != 'POST':
+        return make_response(jsonify({'status': 'failed',
+                                      'error': 'Method not allowed'}), 405)
+    try:
+        data = request.get_json()
+        thread_id = data['thread']
+        result = db.engine.execute("select Message, UserID from posts" +
+            " where threadid=" + str(thread_id) + " order by Ts;")
+        thread = []
+        for row in result:
+            user = row['userid']
+            msg = row['message']
+            thread.append(dict(user=user, message=str(msg)))
+            
+        return jsonify(thread=thread)
 
+    except:
+        return make_response(jsonify({'status': 'failed',
+                        'error': str(sys.exc_info()[0])}), 500)
+"""
+{
+    thread:thread_id
+    message:msg
+    user:user_id
+}
+"""
+@app.route('/api/reply', methods=['POST'])
+def reply():
+    if request.method != 'POST':
+        return make_response(jsonify({'status': 'failed',
+                                      'error': 'Method not allowed'}), 405)
+    try:
+        data = request.get_json()
+
+        thread = data['thread']
+        msg = data['message']
+        user = data['user_id']
+
+
+        db.engine.execute("insert into Posts(Latitude, Longitude, Message, ThreadId, UserId)" +
+            "values(-1, -1, \'" + msg + "\', " + str(thread) + ", " + str(user) + ");")
+
+        return jsonify({'status': 'OK'})
+
+    except:
         return make_response(jsonify({'status': 'failed',
                         'error': str(sys.exc_info()[0])}), 500)
 
-
-
-#get posts
-#reply
-#rate
 """{
 'post': postID,
 'vote': ['up'/'down']
@@ -78,7 +129,8 @@ def reate_post():
 
         return make_response(jsonify({'status': 'ok'}, 200))
     except:
-        return
+        return make_response(jsonify({'status': 'failed',
+                        'error': str(sys.exc_info()[0])}), 500)
 
 if __name__ == '__main__':
     app.debug = True
