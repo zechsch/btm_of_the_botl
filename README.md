@@ -118,7 +118,9 @@ A location based social messaging service. Created by:
 
   * **Code:** 200 <br />
     **Content:** `{ 
-    thread : [
+    "Status":"OK,
+    "thread_id":thread_id,
+    "thread" : [
       {
         "message":"original Message",
         "user":Op user_id
