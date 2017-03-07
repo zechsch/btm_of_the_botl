@@ -19,8 +19,6 @@ def index():
     return redirect("http://botl-app.com", code=302)
 
 """
-Requires user_id to be in users table.
-Should be taken care of on install and first open.
 Adds post to posts database."""
 @app.route('/api/new_post', methods=['POST'])
 def new_post():
@@ -40,16 +38,13 @@ def new_post():
         db.engine.execute("insert into Posts(Latitude, Longitude, Message, UserId) values(" +
             str(latitude) + ", " + str(longitude) + ", \'" + msg + "\', " + str(user) + ");")
 
-        return jsonify({'status': 'OK'})
+        return jsonify(status="OK")
     except:
         return make_response(jsonify({'status': 'failed',
                         'error': str(sys.exc_info()[0])}), 500)
-#get thread
-"""
-{
-    thread:thread_id
-}
-"""
+
+
+
 @app.route('/api/get_thread', methods=['POST'])
 def get_thread():
     if request.method != 'POST':
@@ -57,7 +52,11 @@ def get_thread():
                                       'error': 'Method not allowed'}), 405)
     try:
         data = request.get_json()
-        thread_id = data['thread']
+        post = data['post_id']
+
+        result = db.engine.execute("select * from posts where postid=" + str(post) + ";")
+        for row in result:
+            thread_id = row['threadid']
         result = db.engine.execute("select Message, UserID from posts" +
             " where threadid=" + str(thread_id) + " order by Ts;")
         thread = []
@@ -65,19 +64,13 @@ def get_thread():
             user = row['userid']
             msg = row['message']
             thread.append(dict(user=user, message=str(msg)))
-            
-        return jsonify(thread=thread)
+
+        return jsonify(status="OK", thread_id=thread_id, thread=thread)
 
     except:
         return make_response(jsonify({'status': 'failed',
                         'error': str(sys.exc_info()[0])}), 500)
-"""
-{
-    thread:thread_id
-    message:msg
-    user:user_id
-}
-"""
+
 @app.route('/api/reply', methods=['POST'])
 def reply():
     if request.method != 'POST':
@@ -94,16 +87,13 @@ def reply():
         db.engine.execute("insert into Posts(Latitude, Longitude, Message, ThreadId, UserId)" +
             "values(-1, -1, \'" + msg + "\', " + str(thread) + ", " + str(user) + ");")
 
-        return jsonify({'status': 'OK'})
+        return jsonify(status="OK")
 
     except:
         return make_response(jsonify({'status': 'failed',
                         'error': str(sys.exc_info()[0])}), 500)
 
-"""{
-'post': postID,
-'vote': ['up'/'down']
-}"""
+
 @app.route('/api/rate_post', methods=['POST'])
 def reate_post():
 
@@ -127,7 +117,7 @@ def reate_post():
 
         db.engine.execute("update Posts set rating=" + str(rating) + " where PostID=" + str(post_id) + ";")
 
-        return make_response(jsonify({'status': 'ok'}, 200))
+        return jsonify(status="OK")
     except:
         return make_response(jsonify({'status': 'failed',
                         'error': str(sys.exc_info()[0])}), 500)
