@@ -112,7 +112,7 @@ A location based social messaging service. Created by:
 
 * **Data Params**
 
-  + thread (int)
+  + post_id (int)
 
 * **Success Response:**
 
