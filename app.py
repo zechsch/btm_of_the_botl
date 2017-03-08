@@ -57,6 +57,8 @@ def get_thread():
         result = db.engine.execute("select * from posts where postid=" + str(post) + ";")
         for row in result:
             thread_id = row['threadid']
+            latitude = row['latitude']
+            longitude = row['longitude']
         result = db.engine.execute("select Message, UserID from posts" +
             " where threadid=" + str(thread_id) + " order by Ts;")
         thread = []
@@ -65,7 +67,7 @@ def get_thread():
             msg = row['message']
             thread.append(dict(user=user, message=str(msg)))
 
-        return jsonify(status="OK", thread_id=thread_id, thread=thread)
+        return jsonify(status="OK", latitude=latitude, longitude=longitude, thread_id=thread_id, thread=thread)
 
     except:
         return make_response(jsonify({'status': 'failed',
