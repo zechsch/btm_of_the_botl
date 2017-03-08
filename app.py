@@ -51,18 +51,25 @@ def get_posts():
                                       'error': 'Method not allowed'}), 405)
     try:
         data = request.get_json()
-        dist = data["dist"]
-        postNum = data["numOfPosts"]
-        startLat = data["Lat"]
-        startLong = data ["Long"]
+        dist = data["distance"]
+        postNum = data["num_posts"]
+        startLat = data["latitude"]
+        startLong = data ["longitude"]
 
+        result = db.engine.execute("select * from (SELECT Message, PostID, UserID, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only;")
 
-        postList = db.engine.execute("""SELECT Message, PostID, UserID, Latitude, Longitude, SQRT(
-    POW(69.1 * (Latitude - """ + startLat + """), 2) +
-    POW(69.1 * (""" + startLong + """ - Longitude) * COS(Latitude / 57.3), 2)) AS distance
-    FROM Posts distance < """ + dist + """ ORDER BY distance fetch first """ + postNum + """;""")
+        posts = []
+        for row in result:
+            post_id = row['postid']
+            user_id = row['userid']
+            lat = row['latitude']
+            longitude = row['longitude']
+            rating = row['rating']
+            msg = row['message']
+            posts.append(dict(post_id=post_id, user_id=user_id, latitude=lat,
+                longitude=longitude, rating=rating, message=msg))
 
-        return jsonify(postList)
+        return jsonify(status='OK', posts=posts)
 
     except:
         return make_response(jsonify({'status': 'failed',
@@ -86,7 +93,7 @@ def get_thread():
 
         result = db.engine.execute("select Message, UserID from posts" +
             " where threadid=" + str(thread_id) + " order by Ts;")
-            s
+
         thread = []
         for row in result:
             user = row['userid']
