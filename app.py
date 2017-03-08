@@ -91,14 +91,15 @@ def get_thread():
             latitude = row['latitude']
             longitude = row['longitude']
 
-        result = db.engine.execute("select Message, UserID from posts" +
+        result = db.engine.execute("select Message, rating, UserID from posts" +
             " where threadid=" + str(thread_id) + " order by Ts;")
 
         thread = []
         for row in result:
             user = row['userid']
             msg = row['message']
-            thread.append(dict(user=user, message=str(msg)))
+            rating = row['rating']
+            thread.append(dict(user=user, message=str(msg), rating=rating))
 
         return jsonify(status="OK", latitude=latitude, longitude=longitude, thread_id=thread_id, thread=thread)
 
