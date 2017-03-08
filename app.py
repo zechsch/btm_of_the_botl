@@ -59,8 +59,10 @@ def get_thread():
             thread_id = row['threadid']
             latitude = row['latitude']
             longitude = row['longitude']
+
         result = db.engine.execute("select Message, UserID from posts" +
             " where threadid=" + str(thread_id) + " order by Ts;")
+            s
         thread = []
         for row in result:
             user = row['userid']
