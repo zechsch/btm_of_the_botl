@@ -44,6 +44,30 @@ def new_post():
                         'error': str(sys.exc_info()[0])}), 500)
 
 
+@app.route('/api/get_posts', methods=['POST'])
+def get_posts():
+    if request.method != 'POST':
+        return make_response(jsonify({'status': 'failed',
+                                      'error': 'Method not allowed'}), 405)
+    try:
+        data = request.get_json()
+        dist = data["dist"]
+        postNum = data["numOfPosts"]
+        startLat = data["Lat"]
+        startLong = data ["Long"]
+
+
+        postList = db.engine.execute("""SELECT Message, PostID, UserID, Latitude, Longitude, SQRT(
+    POW(69.1 * (Latitude - """ + startLat + """), 2) +
+    POW(69.1 * (""" + startLong + """ - Longitude) * COS(Latitude / 57.3), 2)) AS distance
+    FROM Posts distance < """ + dist + """ ORDER BY distance fetch first """ + postNum + """;""")
+
+        return jsonify(postList)
+
+    except:
+        return make_response(jsonify({'status': 'failed',
+                        'error': str(sys.exc_info()[0])}), 500)
+
 
 @app.route('/api/get_thread', methods=['POST'])
 def get_thread():
