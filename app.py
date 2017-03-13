@@ -62,11 +62,11 @@ def get_posts():
         for row in result:
             post_id = row['postid']
             user_id = row['userid']
-            lat = row['latitude']
+            latitude = row['latitude']
             longitude = row['longitude']
             rating = row['rating']
             msg = row['message']
-            posts.append(dict(post_id=post_id, user_id=user_id, latitude=lat,
+            posts.append(dict(post_id=post_id, user_id=user_id, latitude=latitude,
                 longitude=longitude, rating=rating, message=msg))
 
         return jsonify(status='OK', posts=posts)
