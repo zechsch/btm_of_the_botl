@@ -2,6 +2,7 @@
 from flask import Flask, render_template, request, jsonify, redirect, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_heroku import Heroku
+from extensions import *
 import os
 import sys
 
@@ -56,7 +57,7 @@ def get_posts():
         startLat = data["latitude"]
         startLong = data ["longitude"]
 
-        result = db.engine.execute("select * from (SELECT Message, PostID, UserID, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only;")
+        result = db.engine.execute("select * from (select * from (SELECT Message, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only) as foo1 order by ts;")
 
         posts = []
         for row in result:
@@ -158,6 +159,71 @@ def reate_post():
         return make_response(jsonify({'status': 'failed',
                         'error': str(sys.exc_info()[0])}), 500)
 
+@app.route('/api/login', methods=['POST'])
+def login():
+
+        errors = []
+
+        data = request.get_json()
+
+        username = data['username']
+        password = data['password']
+
+        # check if username exists
+        valid_username = db.engine.execute('select username from users where username=\'' + username +'\';')
+        if valid_username.rowcount == 0:
+            er = {"message":"Username does not exist"}
+            err=[er]
+            status = 404
+            return jsonify(errors=err), status
+        valid_username = valid_username.first()['username']
+
+        # ---------------
+        # check if password is valid (if username exists...)
+        # fetch password
+        passHash = db.engine.execute('select user_password from users where username=\'' + username + '\';')
+        # get the previous salt
+        passHash = passHash.first()['user_password']
+        salt = passHash.split("$")[1]
+        # this is the user's attempt at password
+        attempt = encrypt_password(password, salt)
+        # check if password matches...
+        if passHash != attempt:
+            errors.append({"message":'Password is incorrect for the specified username'})
+
+        # If there are errors, redirect to login, with errors
+        if len(errors) != 0:
+            return jsonify(errors=errors), 422
+
+        # otherwise, log user in and redirect to main page
+
+        return jsonify(username=username,status='OK')
+
+@app.route('/api/register', methods=['POST'])
+def register():
+    errors = []
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
+    phone = data['phone']
+    # Check for unique username
+    results = db.engine.execute('select username from users;')
+    for row in results:
+        if username.lower() == row['username'].lower():
+            errors.append({"message":'This username is taken'})
+            break
+    # ---------------------------
+
+    if len(errors) != 0:
+        return jsonify(errors=errors), 422
+
+    # if no errors - create new entry in User table and redirect to /login page
+    #encrypt password
+    password = encrypt_password(password)
+    db.engine.execute('insert into Users(username, user_password, user_phone, user_device_id) values(\'%s\', \'%s\', \'%s\', \'%s\')' % (username, password, phone, phone))
+    #return jsonify(username=args['username'], firstname=args['firstname'], lastname=args['lastname'], email=args['email']), 201
+    return jsonify(status="OK")
+    # ------------------------------
 if __name__ == '__main__':
     app.debug = True
     app.run()
