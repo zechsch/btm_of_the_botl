@@ -117,13 +117,15 @@ def reply():
     try:
         data = request.get_json()
 
-        thread = data['thread']
+        op = data['thread']
         msg = data['message']
         user = data['user_id']
 
-
+        thread = db.engine.execute("select threadid from posts where postid=" + str(op) + ";")
+        thread = thread.first()['threadid']
+        
         db.engine.execute("insert into Posts(Latitude, Longitude, Message, ThreadId, UserId)" +
-            "values(-1, -1, \'" + msg + "\', " + str(thread) + ", " + str(user) + ");")
+            "values(-1000, -1000, \'" + msg + "\', " + str(thread) + ", " + str(user) + ");")
 
         return jsonify(status="OK")
 
