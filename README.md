@@ -132,6 +132,51 @@ A location based social messaging service. Created by:
       ...
       ] 
       }`
+## Get Posts
+  Get nearby posts in a given radius. Returns a list of messages.
+
+* **URL**
+
+  /api/get_posts
+
+* **Method:**
+
+  `POST`
+
+* **Data Params**
+
+  + distance  (float)
+  + num_posts (int)
+  + latitude  (float)
+  + longitude (float)
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{ 
+    "Status":"OK,
+    "posts" : [
+      {
+        "post_id"=post_id,
+        "user_id"=user_id,
+        "latitude"=latitude,
+        "longitude"=longitude,
+        "rating"=rating,
+        "message"=msg
+      },
+      {
+      "post_id"=post_id,
+        "user_id"=user_id,
+        "latitude"=latitude,
+        "longitude"=longitude,
+        "rating"=rating,
+        "message"=msg
+      }
+      ...
+      ] 
+      }`
+
+
 
 * **Error Response:**
 
