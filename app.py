@@ -57,17 +57,18 @@ def get_posts():
         startLat = data["latitude"]
         startLong = data ["longitude"]
 
-        result = db.engine.execute("select * from (select * from (SELECT Message, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only) as foo1 order by ts;")
+        result = db.engine.execute("select * from (select * from (SELECT Message, threadid, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only) as foo1 order by ts;")
 
         posts = []
         for row in result:
             post_id = row['postid']
+            thread_id = row['threadid']
             user_id = row['userid']
             latitude = row['latitude']
             longitude = row['longitude']
             rating = row['rating']
             msg = row['message']
-            posts.append(dict(post_id=post_id, user_id=user_id, latitude=latitude,
+            posts.append(dict(post_id=post_id, thread_id=thread_id, user_id=user_id, latitude=latitude,
                 longitude=longitude, rating=rating, message=msg))
 
         return jsonify(status='OK', posts=posts)
