@@ -24,7 +24,6 @@ A location based social messaging service. Created by:
   + latitude (long)
   + longitude (long)
   + message (string)
-  + thread_id (int)
   + user_id (int)
 
 * **Success Response:**
