@@ -67,7 +67,7 @@ A location based social messaging service. Created by:
 
   * **Code:** 405 METHOD NOT ALLOWED <br />
     **Content:** `{ error : "Method not allowed"}`
-    
+
 ## Reply
   Reply to a post
 
@@ -116,7 +116,7 @@ A location based social messaging service. Created by:
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{ 
+    **Content:** `{
     "Status":"OK,
     "thread_id":thread_id,
     "thread" : [
@@ -129,7 +129,7 @@ A location based social messaging service. Created by:
         "user":response owner
       }
       ...
-      ] 
+      ]
       }`
 ## Get Posts
   Get nearby posts in a given radius. Returns a list of messages.
@@ -152,7 +152,7 @@ A location based social messaging service. Created by:
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{ 
+    **Content:** `{
     "Status":"OK,
     "posts" : [
       {
@@ -172,10 +172,8 @@ A location based social messaging service. Created by:
         "message"=msg
       }
       ...
-      ] 
+      ]
       }`
-
-
 
 * **Error Response:**
 

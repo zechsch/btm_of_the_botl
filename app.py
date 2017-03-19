@@ -7,10 +7,7 @@ import os
 import sys
 
 app = Flask(__name__)
-if os.environ.get('DATABASE_URL') is None:
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/Zack'
-else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db = SQLAlchemy(app)
 heroku = Heroku(app)
 
@@ -123,7 +120,7 @@ def reply():
 
         thread = db.engine.execute("select threadid from posts where postid=" + str(op) + ";")
         thread = thread.first()['threadid']
-        
+
         db.engine.execute("insert into Posts(Latitude, Longitude, Message, ThreadId, UserId)" +
             "values(-1000, -1000, \'" + msg + "\', " + str(thread) + ", " + str(user) + ");")
 
