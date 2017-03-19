@@ -7,6 +7,22 @@ A location based social messaging service. Created by:
 + [Zechariah Schneider](zechsch@umich.edu)
 + [Joshua Spigelman](jlspige@umich.edu)
 
+# To deploy:
+* **Botl Devs**
+Push to Heroku with
+    git push heroku master
+
+* **Others**
+You can deploy this API by creating a heroku account and app,
+adding the postgresql plugin, pushing all code to Heroku, and running initialization scripts with
+```
+heroku pg:psql
+\i postsinit.sql;
+\i create_user_tables.sql;
+```
+
+Viola! Your API is deployed and running.
+
 # Endpoints:
 ## New Post
   Adds a new post.
