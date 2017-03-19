@@ -45,6 +45,6 @@ BEGIN
 END;
 $$;
 
-CREATE TRIGGER delete_trigger
+/*CREATE TRIGGER delete_trigger
     AFTER INSERT ON posts
-    EXECUTE PROCEDURE delete_old_posts();
+    EXECUTE PROCEDURE delete_old_posts();*/
