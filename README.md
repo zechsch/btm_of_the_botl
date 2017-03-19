@@ -21,7 +21,7 @@ heroku pg:psql
 \i create_user_tables.sql;
 ```
 
-Viola! Your API is deployed and running.
+Viola! Your API is up and running.
 
 # Endpoints:
 ## New Post
@@ -135,6 +135,8 @@ Viola! Your API is deployed and running.
     **Content:** `{
     "Status":"OK,
     "thread_id":thread_id,
+    "latitude":latitude,
+    "longitude":longitude,
     "thread" : [
       {
         "message":"original Message",
@@ -173,6 +175,7 @@ Viola! Your API is deployed and running.
     "posts" : [
       {
         "post_id"=post_id,
+        "thread_id"=thread_id,
         "user_id"=user_id,
         "latitude"=latitude,
         "longitude"=longitude,
@@ -180,7 +183,8 @@ Viola! Your API is deployed and running.
         "message"=msg
       },
       {
-      "post_id"=post_id,
+        "post_id"=post_id,
+        "thread_id"=thread_id,
         "user_id"=user_id,
         "latitude"=latitude,
         "longitude"=longitude,

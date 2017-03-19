@@ -11,7 +11,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db = SQLAlchemy(app)
 heroku = Heroku(app)
 
-# Set "homepage" to index.html
+# Set "homepage" to botl-app.com
 @app.route('/')
 def index():
     return redirect("http://botl-app.com", code=302)
@@ -20,6 +20,7 @@ def index():
 Adds post to posts database."""
 @app.route('/api/new_post', methods=['POST'])
 def new_post():
+    #only allow post method
     if request.method != 'POST':
         return make_response(jsonify({'status': 'failed',
                                       'error': 'Method not allowed'}), 405)
@@ -31,8 +32,6 @@ def new_post():
         msg = data['message']
         user = data['user_id']
 
-
-
         db.engine.execute("insert into Posts(Latitude, Longitude, Message, UserId) values(" +
             str(latitude) + ", " + str(longitude) + ", \'" + msg + "\', " + str(user) + ");")
 
@@ -41,7 +40,8 @@ def new_post():
         return make_response(jsonify({'status': 'failed',
                         'error': str(sys.exc_info()[0])}), 500)
 
-
+"""
+Gets n nearest posts to user. Sorted by post time."""
 @app.route('/api/get_posts', methods=['POST'])
 def get_posts():
     if request.method != 'POST':
@@ -49,6 +49,7 @@ def get_posts():
                                       'error': 'Method not allowed'}), 405)
     try:
         data = request.get_json()
+
         dist = data["distance"]
         postNum = data["num_posts"]
         startLat = data["latitude"]
