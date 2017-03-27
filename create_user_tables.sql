@@ -9,7 +9,7 @@ create table users
         user_id Integer not null default nextval('uid'),
         username varchar(8),
         user_password varchar(16),
-        user_device_id varchar(32) not null,
+        user_device_id varchar(8) not null,
         user_karma Integer,
         user_photo varchar(32),
         user_phone varchar(10) not null,

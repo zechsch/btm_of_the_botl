@@ -133,7 +133,7 @@ def reply():
 
 
 @app.route('/api/rate_post', methods=['POST'])
-def reate_post():
+def rate_post():
 
     if request.method != 'POST':
         print(request.method)
@@ -206,12 +206,18 @@ def register():
     data = request.get_json()
     username = data['username']
     password = data['password']
+    device = data['device']
     phone = data['phone']
     # Check for unique username
     results = db.engine.execute('select username from users;')
     for row in results:
         if username.lower() == row['username'].lower():
             errors.append({"message":'This username is taken'})
+            break
+    results = db.engine.execute('select user_device_id from users;')
+    for row in results:
+        if device.lower() == row['user_device_id'].lower():
+            errors.append({"message":'An account is already associated with this device'})
             break
     # ---------------------------
 
@@ -221,10 +227,30 @@ def register():
     # if no errors - create new entry in User table and redirect to /login page
     #encrypt password
     password = encrypt_password(password)
-    db.engine.execute('insert into Users(username, user_password, user_phone, user_device_id) values(\'%s\', \'%s\', \'%s\', \'%s\')' % (username, password, phone, phone))
+    db.engine.execute('insert into Users(username, user_password, user_phone, user_device_id) values(\'%s\', \'%s\', \'%s\', \'%s\')' % (username, password, phone, device))
     #return jsonify(username=args['username'], firstname=args['firstname'], lastname=args['lastname'], email=args['email']), 201
     return jsonify(status="OK")
     # ------------------------------
+
+@app.route('/api/edit_post', methods=['POST'])
+def edit():
+    if request.method != 'POST':
+        return make_response(jsonify({'status': 'failed',
+                                      'error': 'Method not allowed'}), 405)
+
+
+    try:
+        data = request.get_json()
+        post = data['post_id']
+        msg = data['message']
+    except KeyError:
+        db.engine.execute('delete from posts where postid=' + str(post) + ";")
+        return jsonify(status="OK")
+
+    db.engine.execute("update posts set message=\'" + str(msg) + "\' where postid=" + str(post) + ";")
+
+    return jsonify(status="OK")
+
 if __name__ == '__main__':
     app.debug = True
     app.run()
