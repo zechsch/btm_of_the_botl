@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, jsonify, redirect, make_respo
 from flask_sqlalchemy import SQLAlchemy
 from flask_heroku import Heroku
 from extensions import *
+from authy.api import AuthyApiClient
 import os
 import sys
 
@@ -10,6 +11,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db = SQLAlchemy(app)
 heroku = Heroku(app)
+authy_api = AuthyApiClient('268Rr4QalHk9KgYC0BgntMUEXKUsXDtf')
 
 # Set "homepage" to botl-app.com
 @app.route('/')
@@ -160,6 +162,40 @@ def rate_post():
         return make_response(jsonify({'status': 'failed',
                         'error': str(sys.exc_info()[0])}), 500)
 
+@app.route('/api/verify', methods=['POST'])
+def verification():
+    if request.method != 'POST':
+        return make_response(jsonify({'status': 'failed',
+                                      'error': 'Method not allowed'}), 405)
+    try:
+        data = request.get_json()
+        errors = []
+        phone = data['phone']
+        username = data['username']
+        device = data['device']
+
+        results = db.engine.execute('select username from users;')
+        for row in results:
+            if username.lower() == row['username'].lower():
+                errors.append({"message":'This username is taken'})
+                break
+        results = db.engine.execute('select user_device_id from users;')
+        for row in results:
+            if device.lower() == row['user_device_id'].lower():
+                errors.append({"message":'An account is already associated with this device'})
+                break
+        # ---------------------------
+
+        if len(errors) != 0:
+            return jsonify(errors=errors), 422
+
+        authy_api.phones.verification_start(phone_number=phone, country_code='1', via='sms')
+        return jsonify(status="OK")
+    except:
+        return make_response(jsonify({'status': 'failed',
+                        'error': str(sys.exc_info()[0])}), 500)
+
+
 @app.route('/api/login', methods=['POST'])
 def login():
 
@@ -208,6 +244,7 @@ def register():
     password = data['password']
     device = data['device']
     phone = data['phone']
+    verification = data['code']
     # Check for unique username
     results = db.engine.execute('select username from users;')
     for row in results:
@@ -219,6 +256,9 @@ def register():
         if device.lower() == row['user_device_id'].lower():
             errors.append({"message":'An account is already associated with this device'})
             break
+    verification = authy_api.phones.verification_check(phone_number=phone, country_code='1', verification_code=verification)
+    if not verification.content['success']:
+        errors.append({"message":'verification code not correct.'})
     # ---------------------------
 
     if len(errors) != 0:
@@ -229,7 +269,7 @@ def register():
     password = encrypt_password(password)
     db.engine.execute('insert into Users(username, user_password, user_phone, user_device_id) values(\'%s\', \'%s\', \'%s\', \'%s\')' % (username, password, phone, device))
     #return jsonify(username=args['username'], firstname=args['firstname'], lastname=args['lastname'], email=args['email']), 201
-    return jsonify(status="OK")
+    return jsonify(username=username, status="OK")
     # ------------------------------
 
 @app.route('/api/edit_post', methods=['POST'])
