@@ -8,7 +8,7 @@ create table users
     (
         user_id Integer not null default nextval('uid'),
         username varchar(8),
-        user_password varchar(16),
+        user_password varchar(256),
         user_device_id varchar(8) not null,
         user_karma Integer,
         user_photo varchar(32),

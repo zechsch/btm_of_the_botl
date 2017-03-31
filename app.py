@@ -245,17 +245,20 @@ def register():
     device = data['device']
     phone = data['phone']
     verification = data['code']
+
     # Check for unique username
     results = db.engine.execute('select username from users;')
     for row in results:
         if username.lower() == row['username'].lower():
             errors.append({"message":'This username is taken'})
             break
+
     results = db.engine.execute('select user_device_id from users;')
     for row in results:
         if device.lower() == row['user_device_id'].lower():
             errors.append({"message":'An account is already associated with this device'})
             break
+
     verification = authy_api.phones.verification_check(phone_number=phone, country_code='1', verification_code=verification)
     if not verification.content['success']:
         errors.append({"message":'verification code not correct.'})
@@ -290,6 +293,22 @@ def edit():
     db.engine.execute("update posts set message=\'" + str(msg) + "\' where postid=" + str(post) + ";")
 
     return jsonify(status="OK")
+
+@app.route('/api/remove_user', methods=['POST'])
+def remove_user():
+    if request.method != 'POST':
+        return make_response(jsonify({'status': 'failed',
+                                      'error': 'Method not allowed'}), 405)
+    try:
+        data = request.get_json()
+        username = data['username']
+
+        db.engine.execute('delete from users where username=\'' + username + '\';')
+        return jsonify(status='OK')
+    except:
+        return make_response(jsonify({'status': 'failed',
+                        'error': str(sys.exc_info()[0])}), 500)
+
 
 if __name__ == '__main__':
     app.debug = True
