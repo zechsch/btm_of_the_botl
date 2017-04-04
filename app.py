@@ -34,10 +34,13 @@ def new_post():
         msg = data['message']
         user = data['user_id']
 
-        db.engine.execute("insert into Posts(Latitude, Longitude, Message, UserId) values(" +
-            str(latitude) + ", " + str(longitude) + ", \'" + msg + "\', " + str(user) + ");")
+        cmd = "insert into Posts(Latitude, Longitude, Message, UserId) values(%s, %s, %s, %s);"
+        db.engine.execute(cmd, (latitude, longitude, msg, user))
 
-        return jsonify(status="OK")
+        postid = db.engine.execute("select postid from posts where latitude=" + str(latitude) + " and longitude=" + str(longitude) + " and userid=" + str(user) + ";")
+        postid = postid.first()['postid']
+
+        return jsonify(status="OK", postid=postid, user=user)
     except:
         return make_response(jsonify({'status': 'failed',
                         'error': str(sys.exc_info()[0])}), 500)
@@ -121,13 +124,19 @@ def reply():
         msg = data['message']
         user = data['user_id']
 
+
         thread = db.engine.execute("select threadid from posts where postid=" + str(op) + ";")
         thread = thread.first()['threadid']
 
-        db.engine.execute("insert into Posts(Latitude, Longitude, Message, ThreadId, UserId)" +
-            "values(-1000, -1000, \'" + msg + "\', " + str(thread) + ", " + str(user) + ");")
+        cmd = "insert into posts(Latitude, Longitude, Message, ThreadId, userid) values(-1000, -1000, %s, %s, %s);"
+        db.engine.execute(cmd, (msg, thread, user))
 
-        return jsonify(status="OK")
+        #postid = db.engine.execute("select postid from posts where threadid=" + str(thread) + " and message=\'" + str(msg) + "\' and userid=" + str(user) + ";")
+        cmd = "select postid from posts where threadid=%s and message=%s and userid=%s;"
+        postid = db.engine.execute(cmd, (thread, msg, user))
+        postid = postid.first()['postid']
+
+        return jsonify(status="OK", postid=postid)
 
     except:
         return make_response(jsonify({'status': 'failed',
@@ -159,8 +168,8 @@ def rate_post():
 
         return jsonify(status="OK")
     except:
-        return make_response(jsonify({'status': 'failed',
-                        'error': str(sys.exc_info()[0])}), 500)
+        return jsonify({'status': 'failed',
+                        'error': str(sys.exc_info()[0])})
 
 @app.route('/api/verify', methods=['POST'])
 def verification():
@@ -290,8 +299,8 @@ def edit():
         db.engine.execute('delete from posts where postid=' + str(post) + ";")
         return jsonify(status="OK")
 
-    db.engine.execute("update posts set message=\'" + str(msg) + "\' where postid=" + str(post) + ";")
-
+    cmd = "update posts set message=%s where postid= %s;"
+    db.engine.execute(cmd, (msg, post))
     return jsonify(status="OK")
 
 @app.route('/api/remove_user', methods=['POST'])
