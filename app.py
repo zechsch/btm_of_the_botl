@@ -183,7 +183,9 @@ def verification():
         username = data['username']
         device = data['device']
 
-        results = db.engine.execute('select username from users;')
+        cmd = "select %s from users;"
+
+        results = db.engine.execute(cmd, (username))
         for row in results:
             if username.lower() == row['username'].lower():
                 errors.append({"message":'This username is taken'})
@@ -256,7 +258,9 @@ def register():
     verification = data['code']
 
     # Check for unique username
-    results = db.engine.execute('select username from users;')
+    cmd = "select %s from users;"
+
+    results = db.engine.execute(cmd, (username))
     for row in results:
         if username.lower() == row['username'].lower():
             errors.append({"message":'This username is taken'})
@@ -279,8 +283,8 @@ def register():
     # if no errors - create new entry in User table and redirect to /login page
     #encrypt password
     password = encrypt_password(password)
-    db.engine.execute('insert into Users(username, user_password, user_phone, user_device_id) values(\'%s\', \'%s\', \'%s\', \'%s\')' % (username, password, phone, device))
-    #return jsonify(username=args['username'], firstname=args['firstname'], lastname=args['lastname'], email=args['email']), 201
+    cmd = "insert into users(username, user_password, user_phone, user_device_id) values(%s, %s, %s, %s);"
+    db.engine.execute(cmd, (username, password, phone, device))
     return jsonify(username=username, status="OK")
     # ------------------------------
 
