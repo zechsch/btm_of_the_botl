@@ -116,7 +116,7 @@ def get_thread():
             user = row['userid']
             msg = row['message']
             rating = row['rating']
-            thread.append(dict(user=user, message=str(msg), rating=rating))
+            thread.append(dict(user=user, message=msg, rating=rating))
 
         return jsonify(status="OK", latitude=latitude, longitude=longitude, thread_id=thread_id, thread=thread)
 
