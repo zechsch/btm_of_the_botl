@@ -64,13 +64,13 @@ def get_posts():
 
 
             if sort == "time":
-                result = db.engine.execute("select * from (select * from (SELECT Message, threadid, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only) as foo1 order by ts;")
+                result = db.engine.execute("select * from (select * from (SELECT Message, threadid, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only) as foo1 order by ts desc;")
 
             elif sort == "distance":
                 result = db.engine.execute("select * from (SELECT Message, threadid, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only;")
 
             elif sort == "rating":
-                result = db.engine.execute("select * from (select * from (SELECT Message, threadid, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only) as foo1 order by Rating;")
+                result = db.engine.execute("select * from (select * from (SELECT Message, threadid, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only) as foo1 order by Rating desc;")
         else:
             result = db.engine.execute("select * from (select * from (SELECT Message, threadid, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only) as foo1 order by ts;")
 
