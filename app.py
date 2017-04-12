@@ -136,14 +136,12 @@ def reply():
         msg = data['message']
         user = data['user_id']
 
-
         thread = db.engine.execute("select threadid from posts where postid=" + str(op) + ";")
         thread = thread.first()['threadid']
 
         cmd = "insert into posts(Latitude, Longitude, Message, ThreadId, userid) values(-1000, -1000, %s, %s, %s);"
         db.engine.execute(cmd, (msg, thread, user))
 
-        #postid = db.engine.execute("select postid from posts where threadid=" + str(thread) + " and message=\'" + str(msg) + "\' and userid=" + str(user) + ";")
         cmd = "select postid from posts where threadid=%s and message=%s and userid=%s;"
         postid = db.engine.execute(cmd, (thread, msg, user))
         postid = postid.first()['postid']
@@ -195,9 +193,7 @@ def verification():
         username = data['username']
         device = data['device']
 
-        cmd = "select %s from users;"
-
-        results = db.engine.execute(cmd, (username))
+        results = db.engine.execute("select username from users;")
         for row in results:
             if username.lower() == row['username'].lower():
                 errors.append({"message":'This username is taken'})
@@ -272,7 +268,7 @@ def register():
     # Check for unique username
     cmd = "select %s from users;"
 
-    results = db.engine.execute(cmd, (username))
+    results = db.engine.execute("select username from users;")
     for row in results:
         if username.lower() == row['username'].lower():
             errors.append({"message":'This username is taken'})
@@ -295,7 +291,7 @@ def register():
     # if no errors - create new entry in User table and redirect to /login page
     #encrypt password
     password = encrypt_password(password)
-    cmd = "insert into users(username, user_password, user_phone, user_phone, user_device_id) values(%s, %s, %s, %s);"
+    cmd = "insert into users(username, user_password, user_phone, user_device_id) values(%s, %s, %s, %s);"
     db.engine.execute(cmd, (username, password, phone, device))
     return jsonify(username=username, status="OK")
     # ------------------------------
