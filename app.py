@@ -59,8 +59,20 @@ def get_posts():
         postNum = data["num_posts"]
         startLat = data["latitude"]
         startLong = data ["longitude"]
+        if "sort" in data:
+            sort = data["sort"]
 
-        result = db.engine.execute("select * from (select * from (SELECT Message, threadid, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only) as foo1 order by ts;")
+
+            if sort == "time":
+                result = db.engine.execute("select * from (select * from (SELECT Message, threadid, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only) as foo1 order by ts;")
+
+            elif sort == "distance":
+                result = db.engine.execute("select * from (SELECT Message, threadid, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only;")
+
+            elif sort == "rating":
+                result = db.engine.execute("select * from (select * from (SELECT Message, threadid, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only) as foo1 order by Rating;")
+        else:
+            result = db.engine.execute("select * from (select * from (SELECT Message, threadid, PostID, UserID, Ts, Latitude, Rating, Longitude, SQRT(POW(69.1 * " + "(Latitude - " + str(startLat) + "), 2) + POW(69.1 * (" + str(startLong) + " - Longitude) * COS(Latitude / 57.3), 2)) AS distance FROM Posts) as foo where distance < " + str(dist) + " ORDER BY distance fetch first " + str(postNum) + " rows only) as foo1 order by ts;")
 
         posts = []
         for row in result:
@@ -104,7 +116,7 @@ def get_thread():
             user = row['userid']
             msg = row['message']
             rating = row['rating']
-            thread.append(dict(user=user, message=msg, rating=rating))
+            thread.append(dict(user=user, message=str(msg), rating=rating))
 
         return jsonify(status="OK", latitude=latitude, longitude=longitude, thread_id=thread_id, thread=thread)
 
@@ -283,7 +295,7 @@ def register():
     # if no errors - create new entry in User table and redirect to /login page
     #encrypt password
     password = encrypt_password(password)
-    cmd = "insert into users(username, user_password, user_phone, user_device_id) values(%s, %s, %s, %s);"
+    cmd = "insert into users(username, user_password, user_phone, user_phone, user_device_id) values(%s, %s, %s, %s);"
     db.engine.execute(cmd, (username, password, phone, device))
     return jsonify(username=username, status="OK")
     # ------------------------------
