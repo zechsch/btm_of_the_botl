@@ -228,32 +228,32 @@ def login():
         # check if username exists
         valid_username = db.engine.execute('select username from users where username=\'' + username +'\';')
         if valid_username.rowcount == 0:
-            er = {"message":"Username does not exist"}
-            err=[er]
-            status = 404
-            return jsonify(errors=err), status
+            errors.append({"message":'Password/username combo is incorrect.'})
+
+            return jsonify(errors=errors)
         valid_username = valid_username.first()['username']
 
         # ---------------
         # check if password is valid (if username exists...)
         # fetch password
-        passHash = db.engine.execute('select user_password from users where username=\'' + username + '\';')
+        passHash = db.engine.execute('select user_password, user_id from users where username=\'' + username + '\';')
         # get the previous salt
+        user_id = passHash.first()['user_id']
         passHash = passHash.first()['user_password']
         salt = passHash.split("$")[1]
         # this is the user's attempt at password
         attempt = encrypt_password(password, salt)
         # check if password matches...
         if passHash != attempt:
-            errors.append({"message":'Password is incorrect for the specified username'})
+            errors.append({"message":'Password/username combo is incorrect.'})
 
         # If there are errors, redirect to login, with errors
         if len(errors) != 0:
-            return jsonify(errors=errors), 422
+            return jsonify(errors=errors)
 
         # otherwise, log user in and redirect to main page
 
-        return jsonify(username=username,status='OK')
+        return jsonify(username=username,id=user_id, status='OK')
 
 @app.route('/api/register', methods=['POST'])
 def register():

@@ -202,3 +202,146 @@ Viola! Your API is up and running.
 
   * **Code:** 405 METHOD NOT ALLOWED <br />
     **Content:** `{ error : "Method not allowed"}`
+
+## Verify
+  sends user a verifcation code
+
+* **URL**
+
+  /api/verify
+
+* **Method:**
+
+  `POST`
+
+* **Data Params**
+
+  + phone (string)
+  + username (string)
+  + device (string)
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{ status : OK }`
+
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL SERVER ERROR <br />
+    **Content:** `{ error : "Some error message" }`
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `{ error : "why the request was bad"}`
+
+## Register
+  saves a user in DB
+
+* **URL**
+
+  /api/register
+
+* **Method:**
+
+  `POST`
+
+* **Data Params**
+
+  + phone (string)
+  + username (string)
+  + device (string)
+  + code (string)
+  + password (string)
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{ status : OK, username : username }`
+
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL SERVER ERROR <br />
+    **Content:** `{ error : "Some error message" }`
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `{ error : "why the request was bad"}`
+
+## Login
+    logs user in
+
+* **URL**
+
+  /api/login
+
+* **Method:**
+
+  `POST`
+
+* **Data Params**
+
+  + username (string)
+  + password (string)
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{ status : OK, username : username}`
+
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL SERVER ERROR <br />
+    **Content:** `{ error : "Some error message" }`
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `{ error : "why the request was bad"}`
+
+## Edit [For Debugging only]
+  edit / delete a post with given ID. If no message is given, post will be deleted;
+  otherwise the stored message will change to whatever is in the request.
+
+* **URL**
+
+  /api/edit_post
+
+* **Method:**
+
+  `POST`
+
+* **Data Params**
+
+  + post_id (string)
+  + [message (string)]
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{ status : OK }`
+
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL SERVER ERROR <br />
+    **Content:** `{ error : "Some error message" }`
+
+## Delete User
+  Delete a user based on username
+
+* **URL**
+
+  /api/remove_user
+
+* **Method:**
+
+  `POST`
+
+* **Data Params**
+
+  + username (string)
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{ status : OK }`
+
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL SERVER ERROR <br />
+    **Content:** `{ error : "Some error message" }`
