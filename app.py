@@ -241,10 +241,12 @@ def login():
 
         # ---------------
         # check if password is valid (if username exists...)
+        user_id = db.engine.execute('select user_password, user_id from users where username=\'' + username + '\';')
+        user_id = user_id.first()['user_id']
         # fetch password
         passHash = db.engine.execute('select user_password, user_id from users where username=\'' + username + '\';')
         # get the previous salt
-        user_id = passHash.first()['user_id']
+
         passHash = passHash.first()['user_password']
         salt = passHash.split("$")[1]
         # this is the user's attempt at password
