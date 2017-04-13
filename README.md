@@ -70,6 +70,7 @@ Viola! Your API is up and running.
 
   + post (int)
   + vote (string) [up/down]
+  + revote (string) [true/false]
 
 * **Success Response:**
 
@@ -266,7 +267,7 @@ Viola! Your API is up and running.
     **Content:** `{ error : "why the request was bad"}`
 
 ## Login
-    logs user in
+  logs user in
 
 * **URL**
 

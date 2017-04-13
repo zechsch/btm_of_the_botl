@@ -164,15 +164,21 @@ def rate_post():
         data = request.get_json()
         post_id = data['post']
         vote = data['vote']
+        revote = data['revote']
+
+        if revote == "false":
+            num = 1
+        else:
+            num = 2
 
         result = db.engine.execute("select rating from Posts where PostID=" + str(post_id) + ";")
 
         for row in result:
             rating = row[0]
         if vote == 'up':
-            rating += 1
+            rating += num
         else:
-            rating -= 1
+            rating -= num
 
         db.engine.execute("update Posts set rating=" + str(rating) + " where PostID=" + str(post_id) + ";")
 
