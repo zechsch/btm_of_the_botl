@@ -205,10 +205,10 @@ def verification():
                 errors.append({"message":'This username is taken'})
                 break
         results = db.engine.execute('select user_device_id from users;')
-        for row in results:
-            if device.lower() == row['user_device_id'].lower():
-                errors.append({"message":'An account is already associated with this device'})
-                break
+        #for row in results:
+        #    if device.lower() == row['user_device_id'].lower():
+        #        errors.append({"message":'An account is already associated with this device'})
+        #        break
         # ---------------------------
 
         if len(errors) != 0:
